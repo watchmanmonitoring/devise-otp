@@ -5,7 +5,7 @@ en:
       submit_token:
         title: 'Check Token'
         explain: "You're getting this because you enabled two-factors authentication on your account"
-        prompt: 'Please enter your two-factors authentication token:'
+        prompt: 'Please enter your Two-factor authentication token:'
         recovery_prompt: 'Please enter your recovery code:'
         submit: 'Submit Token'
         recovery_link: "I don't have my device, I want to use a recovery code"
@@ -20,29 +20,29 @@ en:
       credentials_refresh:
         title: 'Please enter your password again.'
         explain: 'In order to ensure this is  safe, please enter your password again.'
-        go_on: 'Continue...'
+        go_on: 'Continue…'
         identity: 'Identity:'
-        token: 'Your two-factors authentication token'
+        token: 'Your Two-factor authentication token'
 
       token_secret:
         title: 'Your token secret'
         explain: 'Take a photo of this QR code with your mobile'
         manual_provisioning: 'Manual provisioning code'
-        reset_otp: 'Reset your Two Factors Authentication status'
-        reset_explain: 'This will reset your credentials, and disable two-factors authentication.'
+        reset_otp: 'Reset your Two-factor Authentication status'
+        reset_explain: 'This will reset your credentials, and disable Two-factor authentication.'
         reset_explain_warn: 'You will need to enroll your mobile device again.'
 
       tokens:
-        title: 'Two-factors Authentication:'
-        explain: 'Two factors authentication adds adds an additional layer of security to your account. When logging in you will be asked for a code that you can generate on a physical device, like your phone.'
-        enable_request: 'Would you like to enable Two Factors Authenticator?'
+        title: 'Two-factor Authentication:'
+        explain: 'Two factor authentication adds adds an additional layer of security to your account. When logging in you will be asked for a code that you can generate on a physical device, like your phone.'
+        enable_request: 'Would you like to enable Two-factor Authentication?'
 
-        status: 'Enable Two-Factors Authentication.'
-        submit: 'Continue...'
+        status: 'Enable Two-factor Authentication.'
+        submit: 'Continue…'
 
-        successfully_updated: 'Your two-factors authentication settings have been updated.'
-        successfully_reset_creds: 'Your two-factors credentials has been reset.'
-        successfully_set_persistence: 'Your device is now trusted.'
+        successfully_updated: 'Your Two-factor authentication settings have been updated.'
+        successfully_reset_creds: 'Your Two-factor authentication has been reset.'
+        successfully_set_persistence: 'Your device is now considered trusted.'
         successfully_cleared_persistence: 'Your device has been removed from the list of trusted devices.'
         successfully_reset_persistence: 'Your list of trusted devices has been cleared.'
 
@@ -54,7 +54,6 @@ en:
           sequence: 'Sequence'
           code: 'Recovery Code'
           codes_list: 'Here is the list of your recovery codes'
-          download_codes: 'Download recovery codes'
 
       trusted_devices:
         title: 'Trusted Browsers'

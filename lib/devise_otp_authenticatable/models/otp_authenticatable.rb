@@ -12,15 +12,16 @@ module Devise::Models
 
     module ClassMethods
       ::Devise::Models.config(self, :otp_authentication_timeout, :otp_drift_window, :otp_trust_persistence,
-                                    :otp_mandatory, :otp_credentials_refresh, :otp_issuer, :otp_recovery_tokens)
+                                    :otp_mandatory, :otp_credentials_refresh, :otp_uri_application, :otp_recovery_tokens)
 
       def find_valid_otp_challenge(challenge)
+        Rails.logger.debug challenge
         with_valid_otp_challenge(Time.now).where(:otp_session_challenge => challenge).first
       end
     end
 
     def time_based_otp
-      @time_based_otp ||= ROTP::TOTP.new(otp_auth_secret, issuer: "#{self.class.otp_issuer || Rails.application.class.parent_name}")
+      @time_based_otp ||= ROTP::TOTP.new(otp_auth_secret, issuer: "#{self.class.otp_uri_application || Rails.application.class.module_parent_name}")
     end
 
     def recovery_otp
@@ -41,7 +42,7 @@ module Devise::Models
       @recovery_otp = nil
       generate_otp_auth_secret
       reset_otp_persistence
-      update_attributes!(:otp_enabled => false,
+      update!(:otp_enabled => false, :otp_time_drift => 0,
              :otp_session_challenge => nil, :otp_challenge_expires => nil,
              :otp_recovery_counter => 0)
     end
@@ -61,19 +62,23 @@ module Devise::Models
     end
 
     def enable_otp!
-      if otp_persistence_seed.nil?
-        reset_otp_credentials!
-      end
-
-      update_attributes!(:otp_enabled => true, :otp_enabled_on => Time.now)
+      update!(:otp_enabled => true, :otp_enabled_on => Time.now)
     end
 
     def disable_otp!
-      update_attributes!(:otp_enabled => false, :otp_enabled_on => nil)
+      update!(:otp_enabled => false, :otp_enabled_on => nil, :otp_time_drift => 0)
+    end
+
+    def require_otp!
+      update!(:otp_mandatory => true)
+    end
+
+    def unrequire_otp!
+      update!(:otp_mandatory => false)
     end
 
     def generate_otp_challenge!(expires = nil)
-      update_attributes!(:otp_session_challenge => SecureRandom.hex,
+      update!(:otp_session_challenge => SecureRandom.hex,
              :otp_challenge_expires => DateTime.now + (expires || self.class.otp_authentication_timeout))
       otp_session_challenge
     end
@@ -106,9 +111,11 @@ module Devise::Models
     end
 
     def validate_otp_recovery_token(token)
-      recovery_otp.verify(token, otp_recovery_counter).tap do
+      if recovery_otp.verify(token, otp_recovery_counter)
         self.otp_recovery_counter += 1
         save!
+      else
+        false
       end
     end
     alias_method :valid_otp_recovery_token?, :validate_otp_recovery_token
@@ -118,10 +125,8 @@ module Devise::Models
     private
 
     def validate_otp_token_with_drift(token)
-
-      # should be centered around saved drift
-      (-self.class.otp_drift_window..self.class.otp_drift_window).any? {|drift|
-        (time_based_otp.verify(token, Time.now.ago(30 * drift))) }
+      drift = 30 * self.class.otp_drift_window
+      time_based_otp.verify(token, drift_behind: drift, drift_ahead: drift)
     end
 
     def generate_otp_persistence_seed

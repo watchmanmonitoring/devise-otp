@@ -86,9 +86,10 @@ module DeviseOtpAuthenticatable
       def otp_set_trusted_device_for(resource)
         return unless resource.class.otp_trust_persistence
         cookies.signed[otp_scoped_persistence_cookie] = {
-            :httponly => true,
-            :expires => Time.now + resource.class.otp_trust_persistence,
-            :value => [resource.to_key, resource.authenticatable_salt, resource.otp_persistence_seed]
+          :httponly => true,
+          :expires => Time.now + resource.class.otp_trust_persistence,
+          :value => [resource.to_key, resource.authenticatable_salt, resource.otp_persistence_seed],
+          :domain => AppSettings.app.domain,
         }
       end
 
@@ -133,29 +134,10 @@ module DeviseOtpAuthenticatable
       # returns the URL for the QR Code to initialize the Authenticator device
       #
       def otp_authenticator_token_image(resource)
-        otp_authenticator_token_image_js(resource.otp_provisioning_uri)
+        otp_authenticator_token_image_google(resource.otp_provisioning_uri)
       end
 
       private
-
-      def otp_authenticator_token_image_js(otp_url)
-
-        content_tag(:div, :class => 'qrcode-container') do
-          tag(:div, :id => 'qrcode', :class => 'qrcode') +
-          javascript_tag(%Q[
-
-            new QRCode("qrcode", {
-              text: "#{otp_url}",
-              width: 256,
-              height: 256,
-              colorDark : "#000000",
-              colorLight : "#ffffff",
-              correctLevel : QRCode.CorrectLevel.H
-            });
-          ]) + tag("/div")
-        end
-      end
-
 
       def otp_authenticator_token_image_google(otp_url)
         otp_url = Rack::Utils.escape(otp_url)

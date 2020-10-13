@@ -29,16 +29,16 @@ content = <<-CONTENT
 
   # Users are given a list of one-time recovery tokens, for emergency access
   # set to false to disable giving recovery tokens.
-  #config.otp_recovery_tokens = 10
+  #config.recovery_tokens = 10
 
   # The user is allowed to set his browser as "trusted", no more OTP challenges will be
   # asked for that browser, for a limited time.
   # set to false to disable setting the browser as trusted
   #config.otp_trust_persistence = 1.month
 
-  # The name of the token issuer, to be added to the provisioning
-  # url. Display will vary based on token application. (defaults to the Rails application class)
-  #config.otp_issuer = 'my_application'
+  # The name of this application, to be added to the provisioning
+  # url as '<user_email>/application_name' (defaults to the Rails application class)
+  #config.otp_uri_application = 'my_application'
 
 CONTENT
 

@@ -41,8 +41,8 @@ module Devise
   #
   #
   #
- 	mattr_accessor :otp_drift_window
- 	@@otp_drift_window = 3 # in minutes
+   mattr_accessor :otp_drift_window
+   @@otp_drift_window = 3 # in minutes
 
   #
   # if the user wants to change Otp settings,
@@ -53,10 +53,10 @@ module Devise
   @@otp_credentials_refresh = 15.minutes  # or like 15.minutes, false to disable
 
   #
-  # the name of the token issuer
+  # the user identifier for the token is <email>/Application_name
   #
-  mattr_accessor :otp_issuer
-  @@otp_issuer = Rails.application.class.parent_name
+  mattr_accessor :otp_uri_application
+  @@otp_uri_application = Rails.application.class.module_parent_name
 
   module Otp
 
